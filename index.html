@@ -102,7 +102,7 @@
                 <div id="setupGuide" class="setup-guide">
                     <h3>⚙️ Configuración Inicial Requerida</h3>
                     <p>Para sincronizar con Google Sheets, necesitas configurar las credenciales.</p>
-                    <button class="btn btn-warning" onclick="showSection('settings')">Configurar Ahora</button>
+                    <button class="btn btn-warning" onclick="openSettingsModal()">Configurar Ahora</button>
                 </div>
 
                 <div class="dashboard-grid">
@@ -372,4 +372,9 @@
                         <!-- Expense categories will be populated here -->
                     </div>
                 </div>
-            </div> 
+            </div>
+
+            <!-- Shopping List Section -->
+            <div id="shopping-list" class="section">
+                <div class="header">
+                    <h1
