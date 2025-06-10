@@ -3,378 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Ropa Deportiva - Sistema de Gestión</title>
+    <title>Control Ropa Deportiva</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏃</text></svg>">
-    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="app.js" defer></script>
 </head>
 <body>
-    <!-- Connection Status Banner -->
-    <div id="connectionBanner" class="connection-banner offline">
-        <span id="connectionText">🔴 Sin conexión - Trabajando offline</span>
-        <button id="syncButton" onclick="forceSync()" style="display: none;">🔄 Sincronizar</button>
-    </div>
-
-    <!-- Menu Toggle Button for Mobile -->
-    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-
-    <!-- Notification -->
-    <div id="notification" class="notification"></div>
-
     <div class="container">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">🏃 Ropa Deportiva</div>
-                <div class="version">v2.0 - GitHub Edition</div>
-            </div>
+        <header>
+            <h1>Control Ropa Deportiva</h1>
             <nav>
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <button class="nav-link active" onclick="showSection('dashboard')">
-                            <span class="icon">📊</span> Dashboard
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" onclick="showSection('products')">
-                            <span class="icon">👕</span> Productos
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" onclick="showSection('categories')">
-                            <span class="icon">📁</span> Categorías
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" onclick="showSection('customers')">
-                            <span class="icon">👥</span> Clientes
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" onclick="showSection('sales')">
-                            <span class="icon">💰</span> Ventas
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" onclick="showSection('orders')">
-                            <span class="icon">📦</span> Pedidos
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" onclick="showSection('expenses')">
-                            <span class="icon">💸</span> Gastos
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" onclick="showSection('expense-categories')">
-                            <span class="icon">🏷️</span> Categorías de Gastos
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" onclick="showSection('shopping-list')">
-                            <span class="icon">📝</span> Lista de Compras
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" onclick="showSection('reports')">
-                            <span class="icon">📈</span> Reportes
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" onclick="showSection('settings')">
-                            <span class="icon">⚙️</span> Configuración
-                        </button>
-                    </li>
+                <ul>
+                    <li><a href="#" id="nav-products">Productos</a></li>
+                    <li><a href="#" id="nav-customers">Clientes</a></li>
+                    <li><a href="#" id="nav-sales">Ventas</a></li>
+                    <li><a href="#" id="nav-expenses">Gastos</a></li>
+                    <li><a href="#" id="nav-orders">Pedidos</a></li>
+                    <li><a href="#" id="nav-categories">Categorías</a></li>
                 </ul>
             </nav>
-        </aside>
+        </header>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Dashboard Section -->
-            <div id="dashboard" class="section active">
-                <div class="header">
-                    <h1 class="page-title">Dashboard</h1>
-                    <div class="date-time" id="dateTime"></div>
-                </div>
+        <main id="main-content">
+            <!-- Contenido dinámico se cargará aquí -->
+        </main>
 
-                <!-- Setup Guide (shown when not configured) -->
-                <div id="setupGuide" class="setup-guide">
-                    <h3>⚙️ Configuración Inicial Requerida</h3>
-                    <p>Para sincronizar con Google Sheets, necesitas configurar las credenciales.</p>
-                    <button class="btn btn-warning" onclick="openSettingsModal()">Configurar Ahora</button>
-                </div>
-
-                <div class="dashboard-grid">
-                    <div class="card stat-card">
-                        <span class="stat-icon">💰</span>
-                        <div class="stat-label">Ventas del día</div>
-                        <div class="stat-value" id="todaySales">$0</div>
-                    </div>
-
-                    <div class="card stat-card">
-                        <span class="stat-icon">📦</span>
-                        <div class="stat-label">Pedidos pendientes</div>
-                        <div class="stat-value" id="pendingOrders">0</div>
-                    </div>
-
-                    <div class="card stat-card">
-                        <span class="stat-icon">👕</span>
-                        <div class="stat-label">Productos en stock</div>
-                        <div class="stat-value" id="totalProducts">0</div>
-                    </div>
-
-                    <div class="card stat-card">
-                        <span class="stat-icon">💸</span>
-                        <div class="stat-label">Gastos del mes</div>
-                        <div class="stat-value" id="monthExpenses">$0</div>
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <h3 style="padding: 1rem 1rem 0;">Últimas ventas</h3>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Cliente</th>
-                                <th>Productos</th>
-                                <th>Total</th>
-                                <th>Entrega</th>
-                            </tr>
-                        </thead>
-                        <tbody id="recentSalesTable">
-                            <tr>
-                                <td colspan="5" style="text-align: center; color: #6b7280;">
-                                    No hay ventas registradas aún
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+        <!-- Modales para agregar/editar -->
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 id="modal-title">Título del Modal</h2>
+                <form id="modal-form">
+                    <!-- Campos del formulario se generarán aquí -->
+                </form>
+                <button id="modal-submit">Guardar</button>
             </div>
-
-            <!-- Products Section -->
-            <div id="products" class="section">
-                <div class="header">
-                    <h1 class="page-title">Productos</h1>
-                    <button class="btn btn-primary" onclick="openProductModal()">
-                        <span>+</span> Nuevo Producto
-                    </button>
-                </div>
-
-                <div class="search-bar">
-                    <input type="text" class="form-control search-input" placeholder="Buscar productos..." onkeyup="searchProducts(this.value)">
-                    <select class="form-control" style="width: 200px;" id="filterCategory" onchange="filterProductsByCategory(this.value)">
-                        <option value="">Todas las categorías</option>
-                    </select>
-                </div>
-
-                <div class="table-container">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Código</th>
-                                <th>Imagen</th>
-                                <th>Nombre</th>
-                                <th>Categoría</th>
-                                <th>Precio</th>
-                                <th>Stock</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="productsTable">
-                            <tr>
-                                <td colspan="7" style="text-align: center; color: #6b7280;">
-                                    No hay productos registrados. Haz clic en "Nuevo Producto" para agregar uno.
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Categories Section -->
-            <div id="categories" class="section">
-                <div class="header">
-                    <h1 class="page-title">Categorías de Productos</h1>
-                    <button class="btn btn-primary" onclick="openCategoryModal()">
-                        <span>+</span> Nueva Categoría
-                    </button>
-                </div>
-
-                <div class="card">
-                    <h3>Categorías existentes</h3>
-                    <div class="category-list" id="categoryList">
-                        <!-- Categories will be populated here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Customers Section -->
-            <div id="customers" class="section">
-                <div class="header">
-                    <h1 class="page-title">Clientes</h1>
-                    <button class="btn btn-primary" onclick="openCustomerModal()">
-                        <span>+</span> Nuevo Cliente
-                    </button>
-                </div>
-
-                <div class="search-bar">
-                    <input type="text" class="form-control search-input" placeholder="Buscar clientes..." onkeyup="searchCustomers(this.value)">
-                </div>
-
-                <div class="table-container">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Teléfono</th>
-                                <th>Lugar de entrega</th>
-                                <th>Total Compras</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="customersTable">
-                            <tr>
-                                <td colspan="5" style="text-align: center; color: #6b7280;">
-                                    No hay clientes registrados. Haz clic en "Nuevo Cliente" para agregar uno.
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Sales Section -->
-            <div id="sales" class="section">
-                <div class="header">
-                    <h1 class="page-title">Registro de Ventas</h1>
-                    <button class="btn btn-primary" onclick="openSaleModal()">
-                        <span>+</span> Nueva Venta
-                    </button>
-                </div>
-
-                <div class="table-container">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Cliente</th>
-                                <th>Productos</th>
-                                <th>Total</th>
-                                <th>Pago</th>
-                                <th>Entrega</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="salesTable">
-                            <tr>
-                                <td colspan="7" style="text-align: center; color: #6b7280;">
-                                    No hay ventas registradas aún
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Orders Section -->
-            <div id="orders" class="section">
-                <div class="header">
-                    <h1 class="page-title">Gestión de Pedidos</h1>
-                </div>
-
-                <div class="search-bar">
-                    <input type="text" class="form-control search-input" placeholder="Buscar pedidos..." onkeyup="searchOrders(this.value)">
-                    <select class="form-control" style="width: 200px;" onchange="filterOrdersByStatus(this.value)">
-                        <option value="">Todos los estados</option>
-                        <option value="pending">Pendiente</option>
-                        <option value="delivered">Entregado</option>
-                        <option value="cancelled">Cancelado</option>
-                    </select>
-                </div>
-
-                <div class="table-container">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Nº Pedido</th>
-                                <th>Fecha</th>
-                                <th>Cliente</th>
-                                <th>Total</th>
-                                <th>Entrega</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ordersTable">
-                            <tr>
-                                <td colspan="7" style="text-align: center; color: #6b7280;">
-                                    No hay pedidos registrados aún
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Expenses Section -->
-            <div id="expenses" class="section">
-                <div class="header">
-                    <h1 class="page-title">Control de Gastos</h1>
-                    <button class="btn btn-primary" onclick="openExpenseModal()">
-                        <span>+</span> Nuevo Gasto
-                    </button>
-                </div>
-
-                <div class="search-bar">
-                    <select class="form-control" style="width: 200px;" id="filterExpenseCategory" onchange="filterExpensesByCategory(this.value)">
-                        <option value="">Todas las categorías</option>
-                    </select>
-                </div>
-
-                <div class="table-container">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Descripción</th>
-                                <th>Categoría</th>
-                                <th>Monto</th>
-                                <th>Forma de Pago</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="expensesTable">
-                            <tr>
-                                <td colspan="6" style="text-align: center; color: #6b7280;">
-                                    No hay gastos registrados aún
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Expense Categories Section -->
-            <div id="expense-categories" class="section">
-                <div class="header">
-                    <h1 class="page-title">Categorías de Gastos</h1>
-                    <button class="btn btn-primary" onclick="openExpenseCategoryModal()">
-                        <span>+</span> Nueva Categoría
-                    </button>
-                </div>
-
-                <div class="card">
-                    <h3>Categorías existentes</h3>
-                    <div class="expense-categories" id="expenseCategoryList">
-                        <!-- Expense categories will be populated here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Shopping List Section -->
-            <div id="shopping-list" class="section">
-                <div class="header">
-                    <h1
+        </div>
+    </div>
+</body>
+</html>
